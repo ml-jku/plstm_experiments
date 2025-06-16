@@ -8,6 +8,15 @@ With the linearity, and changing the gating structure to the Source, Transition 
 
 pLSTMs also solve the vanishing/exploding gradient/activation problem on DAGs, similar to how the LSTM tackled them for RNNs on sequences.
 
+## Overview
+This repository integrates the core paper's contributions:
+- the pLSTM core implementation: [https://github.com/ml-jku/plstm](https://github.com/ml-jku/plstm)
+- the arrow pointing extrapolation task implementation: [https://github.com/ml-jku/arrow_pointing_extrapolation](https://github.com/ml-jku/arrow_pointing_extrapolation)
+using the folling setup:
+- compositional configuration with dataclasses via `compoconf`: [https://github.com/kpoeppel/compoconf](https://github.com/kpoeppel/compoconf) 
+- a `jax_trainer` based on Phillip Lippe's base: [https://github.com/kpoeppel/jax_trainer](https://github.com/kpoeppel/jax_trainer)
+- adaptions of Jungwoo Park's Deit III training code [https://github.com/affjljoo3581/deit3-jax](https://github.com/affjljoo3581/deit3-jax)
+
 ## Installation
 
 How to re-produce the original training setup:
