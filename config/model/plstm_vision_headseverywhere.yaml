@@ -1,0 +1,351 @@
+class_name: pLSTMVisionModel
+_short_name: plstm_vision
+dim: 192
+drop_path_decay: false
+drop_path_rate: 0.0
+resolution: ${..dataset.resolution}
+num_channels: ${..dataset.num_channels}
+channels_first: false # ${..dataset.channels_first}
+seqlens: ${oc.floor_divide:${.resolution},${.patch_size}}
+patch_size: 4
+pooling: corners
+norm_bias: true
+num_blocks: 6
+num_heads: 12
+
+aux:
+  direct_bias_init: -10. # -5.
+  source_bias_init: -8. # -5.
+  mark_bias_init: -8. # -5.
+
+mode: classifier
+output_shape:
+  - ${dataset.num_classes}
+
+norm:
+  bias: false
+  dtype: float32
+  eps: 1.0e-05
+  input_dim: ${..dim}
+  norm_type: rmsnorm
+  num_heads: 1
+  param_dtype: float32
+  scale: true
+patch_embed:
+  dim: ${..dim}
+  init_weights: xavier_uniform
+  num_channels: 3
+  patch_size: ${..patch_size}
+  resolution: ${..resolution}
+  channels_first: ${..channels_first}
+  stride: ${..stride}
+
+use_pos_embed: true
+pos_embed:
+  allow_interpolation: true
+  dim: ${..dim}
+  seqlens: ${..seqlens}
+stride: null
+
+block_stack:
+  block:
+    block0:
+      bias: true
+      class_name: PostUpProjectionBlock
+      gated: false
+      gating_function: gelu
+      input_dim: ${..input_dim}
+      projection_round: 32
+      projection_scaling: 4.0
+      mode_2d: P
+      additional_scale: false
+      scale:
+        num_heads: ${..num_heads}
+        input_dim: ${..input_dim}
+        scale_init: 1e-4
+      norm:
+        bias: false
+        dtype: float32
+        eps: 1.0e-05
+        input_dim: ${..input_dim}
+        norm_type: rmsnorm
+        num_heads: ${..num_heads}
+        param_dtype: float32
+        scale: true
+      num_blocks: ${...num_blocks}
+      num_heads: ${..num_heads}
+      skip: true
+      wrapped_model: pLSTM2DFused
+      wrapped_model_config:
+        class_name: pLSTM2DFused
+        DK: ${..input_dim}
+        DV: ${..input_dim}
+        JK: 1
+        JO: 1
+        JQ: 1
+        JT: 1
+        JV: 1
+        _shortname: pLSTM2DFused
+        additional_convolution: false
+        additional_passthrough: false
+        convolution:
+          bias: ${...bias}
+          causal: false
+          input_dim: ${..input_dim}
+          kernel_size:
+            - 3
+            - 3
+          num_heads: ${..num_heads}
+          pointwise: true
+        convolution_inputs: "" # STMDQKsO
+        direct:
+          JK: ${..JK}
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JV: ${..JV}
+          bias_init: zeros
+          bias_offset: ${model.aux.direct_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: false
+          weight_init: zeros
+        dmode_chirality: L
+        input_dim: ${..input_dim}
+        key:
+          DK: ${..DK}
+          JK: ${..JK}
+          bias: ${...bias}
+          bias_init: zeros
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          normalization: none
+          num_heads: 1
+          sub_heads: ${..num_heads}
+          weight_init: normal
+        levels: 6
+        mhnorm:
+          axis: 1
+          bias: false
+          dtype: float32
+          eps: 1.0e-05
+          input_dim: ${..input_dim}
+          norm_type: rmsnorm
+          num_heads: ${..num_heads}
+          param_dtype: float32
+          scale: true
+        mode: P
+        num_heads: ${..num_heads}
+        outprojection: true
+        outprojection_bias: true
+        passthrough:
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+        pmode_orientation_bias_init: headwise_distributed
+        pmode_orientation_scale: 0.5
+        pmode_orientation_weight_init: zeros
+        query:
+          DK: ${..DK}
+          JQ: ${..JQ}
+          bias: ${...bias}
+          bias_init: zeros
+          normalization: none
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          num_heads: 1
+          sub_heads: ${..num_heads}
+          weight_init: normal
+        source:
+          JK: ${..JK}
+          JT: ${..JT}
+          JV: ${..JV}
+          bias_init: zeros
+          bias_offset: ${model.aux.source_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: true
+          weight_init: zeros
+        transition:
+          eigenvalue_bias_init: ones
+          eigenvalue_factor: 1.
+          eigenvalue_representation: tanh
+          eigenvalue_weight_init: zeros
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          transition_dim: 1
+        mark:
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JT: ${..JT}
+          bias_init: zeros
+          bias_offset: ${model.aux.mark_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: true
+          weight_init: zeros
+        tie_query_key: false
+        value:
+          DV: ${..DV}
+          JV: ${..JV}
+          bias: ${...bias}
+          bias_init: zeros
+          normalization: none
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          sub_heads: ${..num_heads}
+          num_heads: 1
+          weight_init: normal
+    block1:
+      bias: true
+      class_name: PostUpProjectionBlock
+      gated: false
+      gating_function: gelu
+      input_dim: ${..input_dim}
+      projection_round: 32
+      projection_scaling: 4.0
+      mode_2d: D
+      norm:
+        bias: false
+        dtype: float32
+        eps: 1.0e-05
+        input_dim: ${..input_dim}
+        norm_type: rmsnorm
+        num_heads: ${..num_heads}
+        param_dtype: float32
+        scale: true
+      num_blocks: ${...num_blocks}
+      num_heads: ${..num_heads}
+      skip: true
+      additional_scale: false
+      scale:
+        num_heads: ${..num_heads}
+        input_dim: ${..input_dim}
+        scale_init: 1e-4
+      wrapped_model: pLSTM2DFused
+      wrapped_model_config:
+        class_name: pLSTM2DFused
+        DK: ${..input_dim}
+        DV: ${..input_dim}
+        input_dim: ${..input_dim}
+        JK: 1
+        JO: 1
+        JQ: 1
+        JT: 1
+        JV: 1
+        _shortname: pLSTM2DFused
+        additional_convolution: false
+        additional_passthrough: false
+        convolution:
+          bias: ${...bias}
+          causal: false
+          input_dim: ${..input_dim}
+          kernel_size:
+            - 3
+            - 3
+          num_heads: ${..num_heads}
+          pointwise: true
+        convolution_inputs: "" # STMDQKsO
+        direct:
+          JK: ${..JK}
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JV: ${..JV}
+          bias_init: zeros
+          bias_offset: ${model.aux.direct_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: false
+          weight_init: zeros
+        dmode_chirality: L
+        key:
+          DK: ${..DK}
+          JK: ${..JK}
+          bias: ${...bias}
+          bias_init: zeros
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          sub_heads: ${..num_heads}
+          normalization: none
+          num_heads: 1
+          weight_init: normal
+        levels: 6
+        mhnorm:
+          axis: 1
+          bias: false
+          dtype: float32
+          eps: 1.0e-05
+          input_dim: ${..input_dim}
+          norm_type: rmsnorm
+          num_heads: ${..num_heads}
+          param_dtype: float32
+          scale: true
+        mode: D
+        num_heads: ${..num_heads}
+        outprojection: true
+        outprojection_bias: true
+        passthrough:
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+        pmode_orientation_bias_init: headwise_distributed
+        pmode_orientation_scale: 0.5
+        pmode_orientation_weight_init: zeros
+        query:
+          DK: ${..DK}
+          JQ: ${..JQ}
+          bias: ${...bias}
+          bias_init: zeros
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          sub_heads: ${..num_heads}
+          normalization: none
+          num_heads: 1
+          weight_init: normal
+        tie_query_key: false
+        value:
+          DV: ${..DV}
+          JV: ${..JV}
+          bias: ${...bias}
+          bias_init: zeros
+          input_dim: ${oc.muli:${..input_dim},${..num_heads}}
+          sub_heads: ${..num_heads}
+          normalization: none
+          num_heads: 1
+          weight_init: normal
+        source:
+          JK: ${..JK}
+          JT: ${..JT}
+          JV: ${..JV}
+          bias_init: zeros
+          bias_offset: ${model.aux.source_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: true
+          weight_init: zeros
+        transition:
+          eigenvalue_bias_init: ones
+          eigenvalue_factor: 1.
+          eigenvalue_representation: tanh
+          eigenvalue_weight_init: zeros
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          transition_dim: 1
+        mark:
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JT: ${..JT}
+          bias_init: zeros
+          bias_offset: ${model.aux.mark_bias_init}
+          activation: "logsigmoid"
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          weight: true
+          weight_init: zeros
+    block_mode: PD
+    block_type: post_up
+    class_name: pLSTMVisionBlock1
+    input_dim: ${..input_dim}
+    num_heads: ${..num_heads}
+  class_name: BlockStack
+  input_dim: ${oc.floor_divide:${..dim},${..num_heads}}
+  num_blocks: ${..num_blocks}
+  num_heads: ${..num_heads}
+  scan_blocks: false

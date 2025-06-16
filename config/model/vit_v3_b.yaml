@@ -1,0 +1,9 @@
+defaults:
+  - vit_v3
+  - _self_
+
+_short_name: ViT3-B
+aux:
+  num_heads: 12
+  num_blocks: 12
+  input_dim: 768

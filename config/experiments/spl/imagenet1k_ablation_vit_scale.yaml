@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - imagenet1k_ablation
+  - override /model: vit_t_scale
+  - _self_

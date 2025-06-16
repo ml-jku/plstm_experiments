@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - arrow_pointing
+  - override /dataset: arrow_pointing_extrapolation
+  - _self_

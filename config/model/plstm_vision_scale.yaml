@@ -1,0 +1,21 @@
+defaults:
+  - plstm_vision
+
+block_stack:
+  block:
+    block0:
+      use_scale: true
+      scale:
+        input_dim: ${..input_dim}
+        class_name: ScaleLayer
+        scale_init:
+          class_name: ConstantInit
+          value: 1e-4
+    block1:
+      use_scale: true
+      scale:
+        class_name: ScaleLayer
+        input_dim: ${..input_dim}
+        scale_init:
+          class_name: ConstantInit
+          value: 1e-4

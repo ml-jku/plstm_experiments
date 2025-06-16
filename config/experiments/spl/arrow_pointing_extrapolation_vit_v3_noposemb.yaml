@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - arrow_pointing_extrapolation
+  - override /model: vit_v3
+  - _self_
+
+model:
+  _short_name: "ViTv3-noposemb"
+  use_pos_embed: false

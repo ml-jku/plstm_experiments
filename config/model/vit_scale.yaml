@@ -1,0 +1,10 @@
+defaults:
+  - vit
+  - _self_
+
+block_stack:
+  block:
+    scale:
+      scale_init:
+        class_name: ConstantInit
+        value: 1e-4

@@ -1,0 +1,16 @@
+defaults:
+  - trainer: default_vision
+  - model: plstm_vision
+  - dataset: cifar10
+  - optimizer: default
+  - _self_
+
+seed: 42
+
+dataset:
+  limit_train_size: ${dataset.global_batch_size}
+
+trainer:
+  train_epochs: 1000
+  check_val_every_n_epoch: 100
+  debug: false

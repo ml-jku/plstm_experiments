@@ -1,0 +1,48 @@
+# @package _global_
+defaults:
+  - base
+  - /trainer: default_vision_spl
+  - /model: plstm_vis_t
+  - /dataset: imagenet1k
+  - /optimizer: default
+  - _self_
+
+aux:
+  tag: "_deit-t"
+
+optimizer:
+  learning_rate:
+    peak_value: 1e-3
+    decay_steps: ${oc.subi:${.steps},${.warmup_steps}}
+    steps: ${oc.muli:${dataset.aux.steps_per_epoch},${trainer.train_epochs}}
+    warmup_steps: ${oc.muli:${dataset.aux.steps_per_epoch},5} # 5 warmup epochs
+
+trainer:
+  train_epochs: 800
+  augmentation: true
+  pre_normalized: false
+  criterion: ce
+  mixup: 0.8
+  cutmix: 1.0
+  label_smoothing: 0.0
+
+dataset:
+  resolution: [224, 224]
+  global_batch_size: 2048
+  color_jitter: 0.0
+  auto_augment: "rand-m9-mstd0.5-inc1"
+  random_erasing: 0.25
+  augment_repeats: 3
+  test_crop_ratio: 0.875
+  random_crop: "rrc"
+
+model:
+  patch_size: 16
+
+  resolution:
+    - 224
+    - 224
+  input_shape:
+    - 224
+    - 224
+    - 3

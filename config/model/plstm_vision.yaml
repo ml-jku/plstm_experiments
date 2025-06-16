@@ -1,0 +1,559 @@
+_short_name: plstm
+class_name: pLSTMVisionModel
+resolution:
+  - 224
+  - 224
+seqlens:
+  - ${oc.floor_divide:${..resolution.0},${..patch_size}}
+  - ${oc.floor_divide:${..resolution.0},${..patch_size}}
+stride: null
+use_pos_embed: true
+channels_first: ${dataset.channels_first}
+dim: ${model.aux.input_dim}
+dtype: ${model.aux.dtype}
+head_bias_init:
+  class_name: ZerosInit
+head_weight_init:
+  axis: -1
+  class_name: SmallInit
+  mup_init_scale: 1.0
+input_shape:
+  - 224
+  - 224
+  - 3
+logit_softcap: null
+mode: classifier
+patch_size: 16
+pooling: corners
+num_heads: ${model.aux.num_heads}
+num_blocks: ${model.aux.num_blocks}
+
+aux:
+  num_heads: 6
+  input_dim: 192
+  dtype: bfloat16
+  param_dtype: float32
+  norm_dtype: float32
+  stmd_sub_heads: ${oc.muli:4,${.num_heads}}
+  drop_path_rate: 0.0
+  vblock_drop_path_rate: 0.0
+  direct_bias_init: -6.
+  mark_bias_init: -4.
+  source_bias_init: -4.
+  mhnorm_eps: 1.0e-5
+  bias: true
+  num_blocks: 6
+
+block_stack:
+  block:
+    drop_path_rate: ${model.aux.vblock_drop_path_rate}
+    block0:
+      bias: ${model.aux.bias}
+      class_name: PostUpProjectionBlock
+      downproj_bias_init:
+        class_name: ZerosInit
+      downproj_weight_init:
+        axis: -1
+        class_name: SmallInit
+        mup_init_scale: 1.0
+      drop_path_rate: ${model.aux.drop_path_rate}
+      dtype: ${model.aux.dtype}
+      gated: false
+      gating_function: gelu
+      input_dim: ${..input_dim}
+      interaction_module:
+        DK: ${oc.floor_divide:${.input_dim},${.num_heads}}
+        DV: ${oc.floor_divide:${.input_dim},${.num_heads}}
+        JK: 1
+        JO: 1
+        JQ: 1
+        JT: 1
+        JV: 1
+        _shortname: pLSTM2DFused
+        additional_convolution: false
+        additional_passthrough: false
+        class_name: pLSTM2DLayerFused
+        convolution: null
+        convolution_inputs: STMDQKsO
+        direct:
+          JK: ${..JK}
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JV: ${..JV}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.direct_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          param_dtype: ${model.aux.param_dtype}
+          num_heads: ${..num_heads}
+          sub_heads: 1
+          weight: false
+          weight_init:
+            class_name: ZerosInit
+        dmode_chirality: L
+        dtype: ${model.aux.dtype}
+        input_dim: ${..input_dim}
+        key:
+          DK: ${..DK}
+          JK: ${..JK}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        levels: 6
+        mark:
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JT: ${..JT}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.mark_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          param_dtype: ${model.aux.param_dtype}
+          weight: true
+          weight_init:
+            class_name: ZerosInit
+        mhnorm:
+          axis: 1
+          bias: false
+          bias_init:
+            class_name: ZerosInit
+          class_name: MultiHeadRMSNorm
+          dtype: ${model.aux.norm_dtype}
+          eps: ${model.aux.mhnorm_eps}
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          scale: true
+          scale_init:
+            class_name: OnesInit
+        mode: P
+        num_heads: ${model.aux.num_heads}
+        outprojection: true
+        outprojection_bias: false
+        outprojection_bias_init:
+          class_name: ZerosInit
+        outprojection_weight_init:
+          axis: -1
+          class_name: SmallInit
+          mup_init_scale: 1.0
+        param_dtype: ${model.aux.param_dtype}
+        passthrough: null
+        pmode_orientation_bias_init:
+          axis: -1
+          class_name: LinspaceInit
+          high: 2.0
+          low: -2.0
+        pmode_orientation_scale: 0.5
+        pmode_orientation_weight_init:
+          class_name: ZerosInit
+        query:
+          DK: ${..DK}
+          JQ: ${..JQ}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        source:
+          JK: ${..JK}
+          JT: ${..JT}
+          JV: ${..JV}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.source_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          param_dtype: ${model.aux.param_dtype}
+          num_heads: ${..num_heads}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          weight: true
+          weight_init:
+            class_name: ZerosInit
+        tie_query_key: false
+        transition:
+          dtype: ${model.aux.dtype}
+          eigenvalue_bias_init:
+            class_name: OnesInit
+          eigenvalue_factor: 5
+          eigenvalue_representation: tanh
+          eigenvalue_weight_init:
+            class_name: ZerosInit
+          inproj_bias_init:
+            class_name: DiagonalInit
+            in_axes: -2
+            out_axes: -1
+            value: 1.0
+          inproj_weight_init:
+            class_name: ZerosInit
+          input_dim: ${..input_dim}
+          normalization_mode: exponential_orthogonalization
+          num_heads: ${..num_heads}
+          orthogonalization_factor: 1.0
+          orthogonalization_order: 16
+          outproj_bias_init:
+            class_name: DiagonalInit
+            in_axes: -2
+            out_axes: -1
+            value: 1.0
+          outproj_weight_init:
+            class_name: ZerosInit
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          symmetric: false
+          transition_dim: ${..JT}
+          weight: true
+        value:
+          DV: ${..DV}
+          JV: ${..JV}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+      interaction_module_name: pLSTM2DFused
+      norm:
+        bias: false
+        bias_init:
+          class_name: ZerosInit
+        class_name: RMSNorm
+        dtype: ${model.aux.norm_dtype}
+        eps: 1.0e-05
+        input_dim: ${..input_dim}
+
+        param_dtype: ${model.aux.param_dtype}
+        scale: true
+        scale_init:
+          class_name: OnesInit
+
+      param_dtype: ${model.aux.param_dtype}
+      projection_round: 64
+      projection_scaling: 4
+      skip: true
+      upproj_bias_init:
+        class_name: ZerosInit
+      upproj_weight_init:
+        axis: -1
+        class_name: SmallInit
+        mup_init_scale: 1.0
+    block1:
+      bias: ${model.aux.bias}
+      class_name: PostUpProjectionBlock
+      downproj_bias_init:
+        class_name: ZerosInit
+      downproj_weight_init:
+        axis: -1
+        class_name: SmallInit
+        mup_init_scale: 1.0
+      drop_path_rate: ${model.aux.drop_path_rate}
+      dtype: ${model.aux.dtype}
+      gated: false
+      gating_function: gelu
+      input_dim: ${..input_dim}
+      interaction_module:
+        DK: ${oc.floor_divide:${.input_dim},${.num_heads}}
+        DV: ${oc.floor_divide:${.input_dim},${.num_heads}}
+        JK: 1
+        JO: 1
+        JQ: 1
+        JT: 1
+        JV: 1
+        _shortname: pLSTM2DFused
+        additional_convolution: false
+        additional_passthrough: false
+        class_name: pLSTM2DLayerFused
+        convolution: null
+        convolution_inputs: STMDQKsO
+        direct:
+          JK: ${..JK}
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JV: ${..JV}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.direct_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          weight: false
+          weight_init:
+            class_name: ZerosInit
+        dmode_chirality: L
+        dtype: ${model.aux.dtype}
+        input_dim: ${..input_dim}
+        key:
+          DK: ${..DK}
+          JK: ${..JK}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        levels: 6
+        mark:
+          JO: ${..JO}
+          JQ: ${..JQ}
+          JT: ${..JT}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.mark_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          param_dtype: ${model.aux.param_dtype}
+          num_heads: ${..num_heads}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          weight: true
+          weight_init:
+            class_name: ZerosInit
+        mhnorm:
+          axis: 1
+          bias: false
+          bias_init:
+            class_name: ZerosInit
+          class_name: MultiHeadRMSNorm
+          dtype: ${model.aux.norm_dtype}
+          eps: ${model.aux.mhnorm_eps}
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+
+          param_dtype: ${model.aux.param_dtype}
+          scale: true
+          scale_init:
+            class_name: OnesInit
+        mode: D
+        num_heads: ${model.aux.num_heads}
+        outprojection: true
+        outprojection_bias: false
+        outprojection_bias_init:
+          class_name: ZerosInit
+        outprojection_weight_init:
+          axis: -1
+          class_name: SmallInit
+          mup_init_scale: 1.0
+
+        param_dtype: ${model.aux.param_dtype}
+        passthrough: null
+        pmode_orientation_bias_init:
+          axis: -1
+          class_name: LinspaceInit
+          high: 2.0
+          low: -2.0
+        pmode_orientation_scale: 0.5
+        pmode_orientation_weight_init:
+          class_name: ZerosInit
+        query:
+          DK: ${..DK}
+          JQ: ${..JQ}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        source:
+          JK: ${..JK}
+          JT: ${..JT}
+          JV: ${..JV}
+          activation: logsigmoid
+          activation_scale: 1.0
+          bias_init:
+            class_name: ConstantInit
+            value: ${model.aux.source_bias_init}
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          num_heads: ${..num_heads}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          param_dtype: ${model.aux.param_dtype}
+          weight: true
+          weight_init:
+            class_name: ZerosInit
+        tie_query_key: false
+        transition:
+          dtype: ${model.aux.dtype}
+          eigenvalue_bias_init:
+            class_name: OnesInit
+          eigenvalue_factor: 5
+          eigenvalue_representation: tanh
+          eigenvalue_weight_init:
+            class_name: ZerosInit
+          inproj_bias_init:
+            class_name: DiagonalInit
+            in_axes: -2
+            out_axes: -1
+            value: 1.0
+          inproj_weight_init:
+            class_name: ZerosInit
+          input_dim: ${..input_dim}
+          normalization_mode: exponential_orthogonalization
+          orthogonalization_factor: 1.0
+          orthogonalization_order: 16
+          outproj_bias_init:
+            class_name: DiagonalInit
+            in_axes: -2
+            out_axes: -1
+            value: 1.0
+          outproj_weight_init:
+            class_name: ZerosInit
+          param_dtype: ${model.aux.param_dtype}
+          num_heads: ${..num_heads}
+          sub_heads: ${model.aux.stmd_sub_heads}
+          symmetric: false
+          transition_dim: ${..JT}
+          weight: true
+        value:
+          DV: ${..DV}
+          JV: ${..JV}
+          bias: ${model.aux.bias}
+          bias_init:
+            class_name: ZerosInit
+          dtype: ${model.aux.dtype}
+          input_dim: ${..input_dim}
+          normalization: none
+          num_heads: ${..num_heads}
+          param_dtype: ${model.aux.param_dtype}
+          sub_heads: 1
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+      interaction_module_name: pLSTM2DFused
+      norm:
+        bias: false
+        bias_init:
+          class_name: ZerosInit
+        class_name: RMSNorm
+        dtype: ${model.aux.norm_dtype}
+        eps: 1.0e-05
+        input_dim: ${..input_dim}
+
+        param_dtype: ${model.aux.param_dtype}
+        scale: true
+        scale_init:
+          class_name: OnesInit
+
+      param_dtype: ${model.aux.param_dtype}
+      projection_round: 64
+      projection_scaling: 4
+      skip: true
+      upproj_bias_init:
+        class_name: ZerosInit
+      upproj_weight_init:
+        axis: -1
+        class_name: SmallInit
+        mup_init_scale: 1.0
+    block_mode: PD
+    block_type: post_up
+    class_name: pLSTMVisionBlock1
+    dtype: ${model.aux.dtype}
+    input_dim: ${..input_dim}
+    num_heads: ${model.aux.num_heads}
+
+    param_dtype: ${model.aux.param_dtype}
+  class_name: BlockStack
+  dtype: ${model.aux.dtype}
+  input_dim: ${model.aux.input_dim}
+  num_blocks: ${model.aux.num_blocks}
+
+  param_dtype: ${model.aux.param_dtype}
+  scan_blocks: false
+norm:
+  bias: false
+  bias_init:
+    class_name: ZerosInit
+  class_name: RMSNorm
+  dtype: ${model.aux.norm_dtype}
+  eps: 1.0e-05
+  input_dim: ${model.aux.input_dim}
+
+  param_dtype: ${model.aux.param_dtype}
+  scale: true
+  scale_init:
+    class_name: OnesInit
+norm_bias: false
+num_channels: 3
+num_patches: ${oc.muli:${.seqlens.0},${.seqlens.1}}
+output_shape:
+  - ${dataset.num_classes}
+param_dtype: ${model.aux.param_dtype}
+patch_embed:
+  bias_init:
+    class_name: ZerosInit
+  channels_first: false # ${..channels_first} #  false
+  dim: ${..dim}
+  dtype: ${model.aux.dtype}
+  num_channels: 3
+  param_dtype: ${model.aux.param_dtype}
+  patch_size: ${..patch_size}
+  resolution: ${..resolution}
+  stride: ${..stride}
+  weight_init:
+    axis: -1
+    class_name: SmallInit
+    mup_init_scale: 1.0
+pos_embed:
+  allow_interpolation: true
+  dim: ${..dim}
+  dtype: ${model.aux.dtype}
+  embed_init:
+    axis: -1
+    class_name: SmallInit
+    mup_init_scale: 1.0
+  learnable: true
+  param_dtype: ${model.aux.param_dtype}
+  seqlens: ${..seqlens}

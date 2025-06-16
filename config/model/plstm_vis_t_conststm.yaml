@@ -1,0 +1,24 @@
+defaults:
+  - plstm_vis_t
+  - _self_
+
+_short_name: plstmConstSTM
+
+block_stack:
+  block:
+    block0:
+      interaction_module:
+        mark:
+          weight: false
+        transition:
+          weight: false
+        source:
+          weight: false
+    block1:
+      interaction_module:
+        mark:
+          weight: false
+        transition:
+          weight: false
+        source:
+          weight: false

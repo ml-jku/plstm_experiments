@@ -1,0 +1,25 @@
+class_name: Lamb
+b1: 0.9
+b2: 0.999
+eps: 1.0e-08
+learning_rate:
+  class_name: WarmupCosineDecaySchedule
+  decay_factor: 0.001
+  decay_steps: 10000
+  end_value: ${oc.mul:${.decay_factor},${.peak_value}}
+  exponent: 1.0
+  init_value: 0.0
+  peak_value: 0.001
+  steps: 11000
+  warmup_steps: 1000
+transforms:
+  gradient_clip_norm:
+    class_name: GradClipNorm
+    max_norm: 1.
+    before_optimizer: true
+weight_decay:
+  class_name: WeightDecay
+  mode: whitelist
+  parameter_regex_exclude: ""
+  parameter_regex_include: "((.*weight$)|(.*kernel$))"
+  value: 0.05

@@ -1,0 +1,10 @@
+defaults:
+  - plstm_vision_monoblock
+  - _self_
+
+_short_name: plstmMonoD
+
+block_stack:
+  block:
+    interaction_module:
+      mode: D

@@ -1,0 +1,67 @@
+# constructor: src.custom_datasets.arrow_pointing_task.build_arrowpointing_datasets
+# name: arrow_pointing
+# global_batch_size: 128
+# local_batch_size: 128
+# # batch_size: 128
+# num_workers: 8
+# resolution: [192, 192]
+# num_channels: 3
+# channels_first: true
+# num_classes: 2
+
+# arrow_pointing_config:
+#   image_size: ${..resolution}
+#   n_samples: 100000
+#   seed: 43
+
+# train_transforms:
+#   - kind: imagenet1k_norm
+# val_transforms:
+#   - kind: imagenet1k_norm
+# test_transforms:
+#   - kind: imagenet1k_norm
+
+arrow_pointing_config:
+  arrow_length_max: 30
+  arrow_length_min: 15
+  arrow_width_max: 4
+  arrow_width_min: 2
+  boundary_padding: 30
+  image_size:
+    - 192
+    - 192
+  intersection_factor: 1.2
+  intersection_ratio: 0.5
+  max_radius: 30
+  min_dist_x_factor: 2.0
+  min_dist_y_factor: 2.0
+  min_radius: 15
+  n_samples: 100000
+  seed: 42
+class_name: ArrowPointingExtrapolationDataset
+# limit_train_size: null
+local_batch_size: 128
+global_batch_size: 128
+normalize: true
+num_classes: 2
+num_workers: 16
+pin_memory: true
+prefetch_factor: 20
+seed: 42
+channels_first: true
+
+test_overrides:
+  test:
+    arrow_pointing_config:
+      n_samples: 10240
+      seed: 200042
+val_overrides:
+  val:
+    arrow_pointing_config:
+      n_samples: 5120
+      seed: 100042
+
+transforms: []
+_short_name: ap
+aux:
+  steps_per_epoch: ${oc.floor_divide:${..arrow_pointing_config.n_samples},${..global_batch_size}}

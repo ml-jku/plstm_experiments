@@ -1,0 +1,11 @@
+_short_name: EfficientNet
+class_name: EfficientNet
+
+input_dim: 192
+input_shape: [224, 224, 3]
+output_shape: [2]
+patch_size: 16
+
+num_classes: ${.output_shape.0}
+
+aux: {}

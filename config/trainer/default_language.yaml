@@ -1,0 +1,37 @@
+name: ImgClassifierTrainer
+train_epochs: 5
+check_val_every_n_epoch: 1
+debug: False
+enable_progress_bar: True
+tabulate_model: True
+seed: 42
+seed_eval: 0
+log_grad_norm: True
+detect_nans: True
+logger:
+  log_dir: ${oc.env:OUTPUT_DIR}/plstm_experiments/${dataset.name}/${model.class_name}_${oc.timestring}
+  tool: TensorBoard
+  project_name: plstm
+  entity: poeppel
+  log_file_verbosity: warning
+callbacks:
+  ModelCheckpoint:
+    monitor: val/acc
+    mode: max
+    save_top_k: 1
+    save_optimizer_state: False
+  ConfusionMatrixCallback:
+    normalize: True
+    cmap: Blues
+    every_n_epochs: 2
+  LearningRateMonitor:
+    every_n_epochs: 1
+  JAXProfiler:
+    every_n_minutes: 60
+    first_step: 10
+    profile_n_steps: 20
+  # GradientSpikeMonitor:
+  #   every_n_epochs: 1
+  #   log_to_disk: True
+  #   ema_decay: 0.99
+  #   threshold: 3.0

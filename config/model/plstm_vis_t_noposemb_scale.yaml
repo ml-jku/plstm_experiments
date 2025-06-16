@@ -1,0 +1,7 @@
+defaults:
+  - plstm_vis_t_scale
+  - _self_
+
+_short_name: plstmNoPosEmb
+
+use_pos_embed: false

@@ -1,0 +1,143 @@
+_short_name: ViT
+
+aux:
+  num_heads: 3
+  input_dim: 192
+  dtype: float32
+  param_dtype: float32
+  bias: true
+  num_blocks: 12
+
+dim: ${model.aux.input_dim}
+block_stack:
+  block:
+    class_name: TransformerBlock
+    attn_weight_init:
+      axis: -1
+      class_name: SmallInit
+      mup_init_scale: 1.0
+    bias: ${model.aux.bias}
+    decode: false
+    downproj_bias_init:
+      class_name: ZerosInit
+    downproj_weight_init:
+      axis: -1
+      class_name: SmallInit
+      mup_init_scale: 1.0
+    drop_path_rate: ${...drop_path_rate}
+    dtype: ${model.aux.dtype}
+    gated: false
+    gating_function: gelu
+    input_dim: ${..input_dim}
+    norm:
+      bias: true
+      bias_init:
+        class_name: ZerosInit
+      class_name: RMSNorm
+      dtype: float32
+      eps: 1.0e-06
+      input_dim: ${..input_dim}
+
+      param_dtype: ${model.aux.param_dtype}
+      scale: true
+      scale_init:
+        class_name: OnesInit
+    num_heads: ${model.aux.num_heads}
+    out_weight_init:
+      axis: -1
+      class_name: SmallInit
+      mup_init_scale: 1.0
+
+    param_dtype: ${model.aux.param_dtype}
+    projection_round: 64
+    projection_scaling: 4
+    scale:
+      dtype: ${model.aux.dtype}
+      input_dim: ${..input_dim}
+      param_dtype: ${model.aux.param_dtype}
+      scale_init:
+        class_name: ConstantInit
+        value: 1e-4
+    skip: true
+    upproj_bias_init:
+      class_name: ZerosInit
+    upproj_weight_init:
+      axis: -1
+      class_name: SmallInit
+      mup_init_scale: 1.0
+  class_name: BlockStack
+  dtype: ${model.aux.dtype}
+  input_dim: ${model.aux.input_dim}
+  num_blocks: ${model.aux.num_blocks}
+  param_dtype: ${model.aux.param_dtype}
+  scan_blocks: false
+channels_first: false
+class_name: pLSTMVisionModel
+drop_path_decay: false
+drop_path_rate: 0.0
+dtype: ${model.aux.dtype}
+head_bias_init:
+  class_name: ZerosInit
+head_weight_init:
+  axis: -1
+  class_name: SmallInit
+  mup_init_scale: 1.0
+input_shape:
+  - 224
+  - 244
+  - 3
+logit_softcap: null
+mode: classifier
+norm:
+  bias: true
+  bias_init:
+    class_name: ZerosInit
+  class_name: RMSNorm
+  dtype: ${model.aux.dtype}
+  eps: 1.0e-06
+  input_dim: ${model.aux.input_dim}
+  param_dtype: ${model.aux.param_dtype}
+  scale: true
+  scale_init:
+    class_name: OnesInit
+num_channels: 3
+output_shape:
+  - ${dataset.num_classes}
+param_dtype: ${model.aux.param_dtype}
+patch_embed:
+  bias_init:
+    class_name: ZerosInit
+  channels_first: ${..channels_first}
+  dim: ${..dim}
+  dtype: ${model.aux.dtype}
+  num_channels: ${..num_channels}
+  param_dtype: ${model.aux.param_dtype}
+  patch_size: ${..patch_size}
+  resolution: ${..resolution}
+  stride: ${..stride}
+  weight_init:
+    axis: -1
+    class_name: SmallInit
+    mup_init_scale: 1.0
+patch_size: 16
+pooling: cls # corners
+pos_embed:
+  allow_interpolation: true
+  dim: ${..dim}
+  dtype: ${model.aux.dtype}
+  embed_init:
+    axis: -1
+    class_name: SmallInit
+    mup_init_scale: 1.0
+  learnable: true
+  param_dtype: ${model.aux.param_dtype}
+  seqlens: ${..seqlens}
+resolution:
+  - 224
+  - 224
+seqlens:
+  - ${oc.floor_divide:${..resolution.0},${..patch_size}}
+  - ${oc.floor_divide:${..resolution.0},${..patch_size}}
+stride: null
+use_pos_embed: true
+num_patches: ${oc.muli:${.seqlens.0},${.seqlens.1}}

@@ -1,0 +1,7 @@
+defaults:
+  - plstm_vision_scale
+  - _self_
+
+aux:
+  input_dim: 384
+  num_heads: 6

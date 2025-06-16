@@ -1,0 +1,22 @@
+class_name: ImageNet1kWDSDataset
+_short_name: inet1k
+num_workers: 16
+resolution: [224, 224]
+shard_dir: ${oc.env:DATA_DIR}/imagenet1k
+local_batch_size: 128
+global_batch_size: 128
+num_channels: 3
+channels_first: true
+num_classes: 1000
+train_mix_collator: null
+shuffle_seed: 42
+
+auto_augment: "rand-m9-mstd0.5-incl"
+random_crop: rrc
+augment_repeats: 3
+test_crop_ratio: 0.875
+random_erasing: 0.25
+color_jitter: 0.0
+
+aux:
+  steps_per_epoch: ${oc.floor_divide:1281167,${..global_batch_size}}

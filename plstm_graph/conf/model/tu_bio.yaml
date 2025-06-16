@@ -1,0 +1,20 @@
+_target_: src.models.${model_name}.GNNModel
+task: null
+num_classes: 0
+num_features: 0
+num_layers: ${num_layers}
+hidden_dim: ${hidden_dim}
+rand_features: false
+graph_pooling_type: sum #mean, sum, null
+neighbor_pooling_type: mean #mean, sum
+node_encoder: null
+edge_encoder: null
+lr: ${lr}
+loss:
+  _target_: torch.nn.CrossEntropyLoss
+evaluator:
+  _target_: src.evaluators.MultiClass
+  num_classes: 0
+  metrics: [acc, roc_auc]
+  main_metric: acc
+  metric_mode: max

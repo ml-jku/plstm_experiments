@@ -1,0 +1,33 @@
+defaults:
+  - arrow_pointing
+
+_short_name: ape
+
+arrow_pointing_config:
+  image_size: [192, 192]
+  n_samples: 100000
+  seed: 43
+
+val_overrides:
+  val:
+    arrow_pointing_config:
+      n_samples: 5120
+      seed: 100042
+      image_size: [192, 192]
+  ext:
+    arrow_pointing_config:
+      n_samples: 5120
+      seed: 100043
+      image_size: [384, 384]
+
+test_overrides:
+  test:
+    arrow_pointing_config:
+      n_samples: 10240
+      seed: 200042
+      image_size: [192, 192]
+  ext:
+    arrow_pointing_config:
+      n_samples: 10240
+      seed: 200043
+      image_size: [384, 384]

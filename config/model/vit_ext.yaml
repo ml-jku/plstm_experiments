@@ -1,0 +1,21 @@
+class_name: ViTExternal
+_short_name: ViTExt-T
+layers: ${model.aux.num_blocks}
+dim: ${model.aux.input_dim}
+heads: ${model.aux.num_heads}
+image_size: ${.resolution.0}
+labels: ${dataset.num_classes}
+layerscale: true
+
+resolution: [224, 224] # ignored
+input_shape: [224, 224, 3] # ignored
+patch_size: 16
+output_shape:
+  - ${..labels}
+droppath: ${model.aux.drop_path_rate}
+
+aux:
+  input_dim: 192
+  num_heads: 3
+  num_blocks: 12
+  drop_path_rate: 0.0

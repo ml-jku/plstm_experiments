@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - arrow_pointing_extrapolation
+  - override /model: vit_v3
+  - _self_

@@ -1,0 +1,5 @@
+# @package _global_
+defaults:
+  - imagenet1k_ablation
+  - override /model: plstm_vis_t_noposemb_scale
+  - _self_

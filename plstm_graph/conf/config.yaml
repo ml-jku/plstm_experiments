@@ -1,0 +1,17 @@
+seed: 42
+batch_size: 64
+fold_idx: 0
+dataset_name: MUTAG  #NCI1  #PTC_FM # PROTEINS
+model_name: mpnn # any model fom /models
+num_layers: 4
+hidden_dim: 128
+accelerator: cpu
+devices: 3
+lr: 0.001
+
+defaults:
+  - _self_
+  - datamodule: tu_datamodule
+  - trainer: default
+  - model: tu_bio
+  - logger: wb

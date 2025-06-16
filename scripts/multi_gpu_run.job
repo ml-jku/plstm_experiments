@@ -1,0 +1,27 @@
+#!/bin/bash
+# SLURM Directives
+#SBATCH --partition=GPU-a100       # Partition name
+#SBATCH --time=1-0:00:00           # Wall time (1 day)
+#SBATCH --ntasks-per-node=8        # Tasks per node
+#SBATCH --gres=gpu:8               # Request 8 GPUs
+
+
+# Load required modules or environment setup (if applicable)
+# module load <module_name>  # Uncomment and replace if needed
+
+# Change to the desired directory
+cd ~/Projects/plstm_all/plstm_experiments
+
+# Activate the Conda environment
+source ~/.bashrc  # Ensure the Conda setup in your shell is loaded
+conda activate plstm_pt251jax0434cu124py311
+
+master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
+export MASTER_ADDR=$master_addr
+export MASTER_PORT=$(expr 12000 + $(echo -n $SLURM_JOBID | tail -c 4))
+
+export START_TIMESTAMP=$(date +%s.%3N)
+
+# Execute the command with arbitrary additional options
+# "$@" allows passing extra arguments when running the script
+srun python3 scripts/run_experiment.py "$@"

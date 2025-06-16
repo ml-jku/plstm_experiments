@@ -1,0 +1,14 @@
+defaults:
+  - plstm_vis_t_scale
+  - _self_
+
+_short_name: plstmPonly
+
+block_stack:
+  block:
+    block0:
+      interaction_module:
+        mode: P
+    block1:
+      interaction_module:
+        mode: P

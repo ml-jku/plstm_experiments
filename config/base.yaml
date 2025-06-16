@@ -1,0 +1,12 @@
+defaults:
+  - trainer: default_vision
+  - model: plstm_vision
+  - dataset: cifar10
+  - optimizer: default
+  - _self_
+
+seed: 42
+aux:
+  tag: ""
+
+batch_mesh_axis: null

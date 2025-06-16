@@ -1,0 +1,43 @@
+# @package _global_
+defaults:
+  - base
+  - /trainer: default_vision # vision_linen
+  - /model: plstm_vision
+  - /dataset: arrow_pointing
+  - /optimizer: default
+  - override /trainer/augmentation: none #  removed for simplified trainer
+  - _self_
+
+model:
+  patch_size: 16
+
+  resolution:
+    - 192
+    - 192
+  input_shape:
+    - 192
+    - 192
+    - 3
+
+trainer:
+  train_epochs: 50
+  num_classes: 2
+  loss_type: cross_entropy
+  # augmentation: false
+  # pre_normalized: true
+  seed: ${aux.seed}
+
+optimizer:
+  learning_rate:
+    peak_value: 1e-3
+    decay_steps: ${oc.subi:${.steps},${.warmup_steps}}
+    steps: ${oc.muli:${dataset.aux.steps_per_epoch},${trainer.train_epochs}} #  350 for one epoch
+    warmup_steps: ${oc.muli:1,${dataset.aux.steps_per_epoch}}
+
+dataset:
+  arrow_pointing_config:
+    seed: ${aux.seed}
+
+aux:
+  seed: 42
+  tag: _s${.seed}

@@ -1,0 +1,5 @@
+seed: 42
+aux:
+  tag: ""
+
+batch_mesh_axis: data

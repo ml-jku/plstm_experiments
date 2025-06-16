@@ -1,0 +1,88 @@
+defaults:
+  - augmentation: label_smooth_mix
+  - logger: wandb
+  - _self_
+
+# name: AugmentedImgClassifierTrainer
+# train_epochs: 10
+# check_val_every_n_epoch: 1
+# debug: False
+# enable_progress_bar: True
+# tabulate_model: True
+# seed: 42
+# augmentation_seed: 43
+# seed_eval: 0
+# log_grad_norm: True
+# detect_nans: True
+# log_steps_every: 10.
+
+# log_param_stats: false
+# log_grad_stats: false
+# log_intermediates: false
+
+class_name: AugmentedImgClassifierTrainer
+num_classes: ${dataset.num_classes}
+augmentation_seed: 44
+check_val_every_n_epoch: 1
+debug: false
+detect_nans: false
+enable_progress_bar: true
+grad_log_modes:
+  - min
+  - max
+  - mean
+  - std
+  - val
+log_grad_norm: true
+log_grad_stats: false
+log_intermediates: false
+log_param_stats: false
+max_steps_per_epoch: null
+model_mode: linen
+nan_keys:
+  - train/loss
+param_log_modes:
+  - min
+  - max
+  - mean
+  - std
+  - val
+seed: 42
+seed_eval: 43
+train_epochs: 1
+
+preprocessing:
+  class_name: Preprocessing
+  preprocessings:
+    - class_name: ChannelTranspose
+      key: 0
+      from_channel_first: ${dataset.channels_first}
+      to_channel_first: false
+      batch_mesh_axis: ${batch_mesh_axis}
+    - class_name: ImageMomentNorm
+      mean: [0.485, 0.456, 0.406]
+      std: [0.229, 0.224, 0.225]
+      key: 0
+      batch_mesh_axis: ${batch_mesh_axis}
+
+callbacks:
+  model_checkpoint:
+    class_name: ModelCheckpoint
+    monitor: val/acc
+    mode: max
+    save_top_k: 1
+    save_optimizer_state: False
+  learning_rate_monitor:
+    class_name: LearningRateMonitor
+    every_n_epochs: 1
+  # JAXProfiler:
+  #   every_n_minutes: 60
+  #   first_step: 10
+  #   profile_n_steps: 20
+  disable_gc:
+    class_name: DisableGC
+  # GradientSpikeMonitor:
+  #   every_n_epochs: 1
+  #   log_to_disk: True
+  #   ema_decay: 0.99
+  #   threshold: 3.0

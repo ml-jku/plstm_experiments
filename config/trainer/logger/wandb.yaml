@@ -1,0 +1,11 @@
+log_dir: ${oc.env:OUTPUT_DIR}/plstm_experiments/${dataset._short_name}/jtr_${model._short_name}${aux.tag}_${oc.timestring:}
+log_steps_every: 100
+log_file_verbosity: warning
+# tool: Tensorboard
+tool_config:
+  class_name: WandbToolLogger
+  entity: poeppel
+  name: ${dataset._short_name}_jtr_${model._short_name}${aux.tag}_${oc.timestring:}
+  project: plstm
+  save_dir: ${..log_dir}
+  use_timestamp_version: false

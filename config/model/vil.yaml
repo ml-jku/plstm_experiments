@@ -1,0 +1,5 @@
+_short_name: ViL
+class_name: ViL
+dim: 192
+depth: 12
+patch_size: 16

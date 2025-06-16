@@ -1,0 +1,14 @@
+class_name: VisionTrainer
+init_seed: 42
+log_dir: ${oc.env:OUTPUT_DIR}/plstm_experiments/${dataset._short_name}/spl_${model._short_name}${aux.tag}_${oc.timestring:}
+project: plstm
+name: ${dataset._short_name}_spl_${model._short_name}${aux.tag}_${oc.timestring:}
+logging: true
+train_batch_size: ${oc.muli:${dataset.global_batch_size},${.grad_accum}}
+grad_accum: 1
+train_steps: ${oc.muli:${oc.floor_divide:${dataset.aux.steps_per_epoch},${.grad_accum}},${.train_epochs}}
+train_epochs: 50
+log_interval: 100
+eval_interval: 2000
+augmentation: true
+pre_normalized: false

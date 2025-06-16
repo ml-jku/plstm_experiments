@@ -1,0 +1,10 @@
+class_name: Augmentation
+augmentations:
+  - class_name: "LabelSmoothing"
+    label_smoothing: 0.1
+    num_classes: ${dataset.num_classes}
+  - class_name: "MixTransform"
+    mixup_alpha: 0.8
+    cutmix_alpha: 1.0
+    num_classes: ${dataset.num_classes}
+    batch_mesh_axis: ${batch_mesh_axis}

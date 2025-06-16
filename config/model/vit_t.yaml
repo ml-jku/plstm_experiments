@@ -1,0 +1,10 @@
+defaults:
+  - vit
+  - _self_
+
+_short_name: ViT-T
+
+aux:
+  num_heads: 3
+  num_blocks: 12
+  input_dim: 192

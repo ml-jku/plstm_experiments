@@ -1,0 +1,184 @@
+_shortname: pLSTMLM
+class_name: pLSTMLMModel
+block_stack:
+  block:
+    bias: true
+    class_name: PreUpProjectionBlock
+    gated: true
+    gating_function: silu
+    input_dim: ${..input_dim}
+    mode_2d: P
+    norm:
+      bias: false
+      dtype: float32
+      eps: 1.0e-05
+      input_dim: ${..input_dim}
+      norm_type: rmsnorm
+      num_heads: ${..num_heads}
+      param_dtype: float32
+      scale: true
+    num_blocks: ${..num_blocks}
+    num_heads: ${..num_heads}
+    orientations_2d:
+      - 0
+      - 1
+      - 2
+      - 3
+    projection_round: 64
+    projection_scaling: 2.0
+    skip: true
+    wrapped_model: pLSTM1D
+    wrapped_model_config:
+      DK: 128
+      DV: 32
+      JK: 1
+      JO: 4
+      JQ: 1
+      JT: 4
+      JV: 4
+      _shortname: pLSTM1D
+      additional_convolution: true
+      additional_magnitude: true
+      additional_passthrough: true
+      convolution:
+        bias: ${...bias}
+        causal: true
+        input_dim: ${..input_dim}
+        kernel_size: 4
+        num_heads: ${..num_heads}
+        pointwise: true
+      convolution_inputs: STMDQKstP
+      direct:
+        JK: ${..JK}
+        JO: ${..JO}
+        JQ: ${..JQ}
+        JV: ${..JV}
+        bias_init: eye
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+        weight: false
+        weight_init: zeros
+      input_dim: 128
+      key:
+        DK: ${..DK}
+        JK: ${..JK}
+        bias: ${...bias}
+        bias_init: zeros
+        input_dim: ${..input_dim}
+        normalization: none
+        num_heads: ${..num_heads}
+        sub_heads: ${..sub_heads}
+        weight_init: normal
+      levels: 8
+      mark:
+        JO: ${..JO}
+        JQ: ${..JQ}
+        JT: ${..JT}
+        bias_init: eye
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+        weight: false
+        weight_init: zeros
+      mhnorm:
+        axis: 1
+        bias: false
+        dtype: float32
+        eps: 1.0e-05
+        input_dim: ${..input_dim}
+        norm_type: rmsnorm
+        num_heads: ${..num_heads}
+        param_dtype: float32
+        scale: true
+      num_heads: ${..num_heads}
+      outprojection: false
+      outprojection_bias: false
+      passthrough:
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+      query:
+        DK: ${..DK}
+        JQ: ${..JQ}
+        bias: ${...bias}
+        bias_init: zeros
+        input_dim: ${..input_dim}
+        normalization: none
+        num_heads: ${..num_heads}
+        sub_heads: ${..sub_heads}
+        weight_init: normal
+      source:
+        JK: ${..JK}
+        JT: ${..JT}
+        JV: ${..JV}
+        bias_init: eye
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+        weight: false
+        weight_init: zeros
+      source_magnitude:
+        activation: identity
+        activation_scale: 4.0
+        bias_init: zeros
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+        weight: true
+        weight_init: zeros
+      sub_heads: 32
+      tie_query_key: false
+      transition:
+        eigenvalue_bias_init: ones
+        eigenvalue_factor: 5
+        eigenvalue_representation: tanh
+        eigenvalue_weight_init: zeros
+        inproj_bias_init: eye
+        inproj_weight_init: zeros
+        input_dim: ${..input_dim}
+        normalization_mode: exponential_orthogonalization
+        num_heads: 1
+        orthogonalization_factor: 1.0
+        orthogonalization_order: 16
+        outproj_bias_init: eye
+        outproj_weight_init: zeros
+        symmetric: false
+        transition_dim: 4
+      transition_magnitude:
+        eigenvalue_bias_init: range
+        eigenvalue_factor: 1.0
+        eigenvalue_representation: logsigmoid
+        eigenvalue_weight_init: zeros
+        input_dim: ${..input_dim}
+        num_heads: ${..num_heads}
+      value:
+        DV: ${..DV}
+        JV: ${..JV}
+        bias: ${...bias}
+        bias_init: zeros
+        input_dim: ${..input_dim}
+        normalization: none
+        num_heads: ${..num_heads}
+        sub_heads: ${..sub_heads}
+        weight_init: normal
+  class_name: BlockStack
+  input_dim: ${..input_dim}
+  num_blocks: ${..num_blocks}
+  num_heads: ${..num_heads}
+  scan_blocks: false
+block_type: pre_up
+context_length: -1
+embedding_dim: 1024
+input_dim: 64
+num_blocks: 1
+num_heads: 16
+vocab_size: 50000
+logit_soft_cap:
+  class_name: SoftCapFunctionLayer
+  scale: 10.0
+post_blocks_norm:
+  bias: false
+  dtype: float32
+  eps: 1.0e-05
+  input_dim: ${..input_dim}
+  norm_type: rmsnorm
+  num_heads: ${..num_heads}
+  param_dtype: float32
+  scale: true
+tie_weights: false

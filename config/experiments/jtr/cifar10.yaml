@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - base
+  - /trainer: default_vision
+  - /model: plstm_vision
+  - /dataset: cifar10
+  - /optimizer: default
+  - override /trainer/augmentation: label_smooth_mix
+  - _self_
+
+trainer:
+  train_epochs: 50
+  num_classes: ${dataset.num_classes}
+  loss_type: cross_entropy
+
+model:
+  patch_size: 4
+
+optimizer:
+  learning_rate:
+    peak_value: 1e-3
+    decay_steps: ${oc.subi:${.steps},${.warmup_steps}}
+    steps: ${oc.muli:${dataset.aux.steps_per_epoch},${trainer.train_epochs}} #  350 for one epoch
+    warmup_steps: ${oc.muli:1,${dataset.aux.steps_per_epoch}}

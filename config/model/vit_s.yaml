@@ -1,0 +1,9 @@
+defaults:
+  - vit
+  - _self_
+
+_short_name: ViT-S
+aux:
+  num_heads: 6
+  num_blocks: 12
+  input_dim: 384

@@ -1,0 +1,9 @@
+log_dir: ${oc.env:OUTPUT_DIR}/plstm_experiments/${dataset._short_name}/${model._short_name}_${oc.timestring:}
+log_steps_every: 10
+log_file_verbosity: warning
+# tool: Tensorboard
+tool_config:
+  class_name: TensorboardToolLogger
+  name: ${dataset._short_name}_${model._short_name}${aux.tag}_${oc.timestring:}
+  save_dir: ${..log_dir}
+  use_timestamp_version: false

@@ -1,0 +1,58 @@
+# @package _global_
+defaults:
+  - base
+  - /trainer: default_vision_spl
+  - /model: plstm_vision_wnzinit
+  - /dataset: imagenet1k
+  - /optimizer: lamb
+  - _self_
+
+aux:
+  tag: "_deit3-b"
+
+model:
+  patch_size: 16
+  aux:
+    input_dim: 768
+    num_heads: 12
+    drop_path_rate: 0.1
+    vblock_drop_path_rate: 0.0
+
+  resolution:
+    - 192
+    - 192
+  input_shape:
+    - 192
+    - 192
+    - 3
+
+optimizer:
+  learning_rate:
+    peak_value: 3e-3
+    decay_steps: ${oc.subi:${.steps},${.warmup_steps}}
+    steps: ${oc.muli:${dataset.aux.steps_per_epoch},${trainer.train_epochs}}
+    warmup_steps: ${oc.muli:${dataset.aux.steps_per_epoch},5} # 5 warmup epochs
+  transforms:
+    gradient_clip_norm:
+      max_norm: 1.
+  weight_decay:
+    value: 0.02
+
+trainer:
+  train_epochs: 400
+  augmentation: true
+  pre_normalized: false
+  criterion: bce
+  mixup: 0.8
+  cutmix: 1.0
+  label_smoothing: 0.0
+
+dataset:
+  resolution: [192, 192]
+  global_batch_size: 2048
+  color_jitter: 0.3
+  auto_augment: "3a"
+  random_erasing: 0.0
+  augment_repeats: 3
+  test_crop_ratio: 1.0
+  random_crop: "rrc"

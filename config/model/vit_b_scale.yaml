@@ -1,0 +1,9 @@
+defaults:
+  - vit_scale
+  - _self_
+
+_short_name: ViT-B
+aux:
+  num_heads: 12
+  num_blocks: 12
+  input_dim: 768

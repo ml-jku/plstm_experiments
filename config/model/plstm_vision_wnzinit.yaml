@@ -1,0 +1,86 @@
+defaults:
+  - plstm_vision
+
+block_stack:
+  block:
+    block0:
+      interaction_module:
+        direct:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        key:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        mark:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        outprojection_weight_init:
+          axis: -1
+          class_name: SmallInit
+          mup_init_scale: 1.0
+        pmode_orientation_weight_init:
+          axis: -1
+          class_name: SmallInit
+        query:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        source:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        transition:
+          eigenvalue_weight_init:
+            axis: -1
+            class_name: SmallInit
+        value:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+
+    block1:
+      interaction_module:
+        direct:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        key:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        mark:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        outprojection_weight_init:
+          axis: -1
+          class_name: SmallInit
+          mup_init_scale: 1.0
+        pmode_orientation_weight_init:
+          axis: -1
+          class_name: SmallInit
+        query:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0
+        source:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+        transition:
+          eigenvalue_weight_init:
+            axis: -1
+            class_name: SmallInit
+        value:
+          weight_init:
+            axis: -1
+            class_name: SmallInit
+            mup_init_scale: 1.0

@@ -1,0 +1,5 @@
+_target_: pytorch_lightning.loggers.WandbLogger
+_partial_: true
+project: plstm
+name: ${model_name}_${dataset_name}
+log_model: false
