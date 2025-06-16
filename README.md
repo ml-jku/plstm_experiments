@@ -1,4 +1,12 @@
-# pLSTM Experiments Repo
+# pLSTM: parallelizable Linear Source Transition Mark Networks - Experiments
+[![arXiv](https://img.shields.io/badge/arXiv-2506.11997-b31b1b.svg)](https://arxiv.org/abs/2506.11997)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Korbinian Pöppel<sup>**1,2**</sup>, Richard Freinschlag<sup>**1**</sup>, Thomas Schmied<sup>**1**</sup>, Wei Lin<sup>**1**</sup>,, Sepp Hochreiter<sup>**1,2**</sup> 
+
+<sup>**1**</sup>ELLIS Unit Linz and LIT AI Lab, Institute for Machine Learning, Johannes Kepler University Linz, Austria\
+<sup>**2**</sup>NXAI GmbH, Linz, Austria
+
 
 This is the main experimentation repository for [pLSTM](https://arxiv.org/abs/2506.11997) - parallelizable Linear Source Transition Mark networks.
 pLSTMs inherit ideas from Multi-Dimensional RNNs [Graves et al. 2007](http://arxiv.org/abs/0705.2011) and linear RNNs.
