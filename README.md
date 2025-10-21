@@ -74,7 +74,7 @@ their package.
 The arrow pointing extrapolation dataset is available [here](https://github.com/ml-jku/arrow_pointing_dataset) for arbitrary generation, and available on [HuggingFace](https://huggingface.co/ml-jku/arrow_pointing_extrapolation) with the the exact images used in the experiments of the paper.
 
 ## Sequence modeling experiments
-The paper's focus is on multi-dimensional settings, but for sequences pLSTMs are also a bit different in their gating compared to existing linear RNNs. Also, out implementation allows for state-tracking extension as in [Merrill et al. 2024](https://arxiv.org/abs/2404.08819), because it allows for non-diagonal transition. In our implementation, you can tune the different state-tracking dimensions (`JS`, `JT`, `JM`). 
+The paper's focus is on multi-dimensional settings, but for sequences pLSTMs are also a bit different in their gating compared to existing linear RNNs. Also, our implementation allows for state-tracking extension as in [Merrill et al. 2024](https://arxiv.org/abs/2404.08819), because it allows for non-diagonal transition. In our implementation, you can tune the different state-tracking dimensions (`JS`, `JT`, `JM`). 
 Feel free to test our models on this, we are curious about your results! :)
 
 
